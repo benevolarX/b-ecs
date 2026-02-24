@@ -1,21 +1,43 @@
 import type { ComponentDef } from "./component";
-import type { EntityID } from "./entity";
-import type { IECSComponent } from "./types";
+import { EntityManager, type EntityID } from "./entity";
+import type { Scene } from "./scene";
 
-export class ECSWorld {
+export class World {
 
-  private components: Set<IECSComponent>
+  #components: Set<any>;
+  #entities = new Set<EntityID>();
+  #scenes: Scene[] = [];
+  #currentSceneId: number|null = null;
+  #entityManager: EntityManager;
 
   constructor() {
-    this.components = new Set()
+    this.#components = new Set()
+    this.#entityManager = new EntityManager()
   }
 
-  registerComponent(component: IECSComponent) {
-    this.components.add(component)
+  start() {
+    if (this.#currentSceneId != null) {
+      let scene = this.#scenes[this.#currentSceneId];
+      if (scene) {
+        // todo : this.command
+        scene.start(this);
+      }
+    }
+  }
+
+  registerComponent(component: any) {
+    this.#components.add(component)
   }
 
   createEntity(): EntityID {
-    return 0;
+    const id: EntityID = this.#entityManager.create()
+    this.#entities.add(id);
+    return id;
+  }
+
+  destroyEntity(entity: EntityID) {
+    // todo : suppression des composants
+    this.#entityManager.destroy(entity);
   }
 
   setComponent(entity: EntityID, component: ComponentDef, value: any) {
