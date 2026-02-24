@@ -1,0 +1,2 @@
+export type EntityID = number;
+

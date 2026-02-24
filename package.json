@@ -1,11 +1,29 @@
 {
   "name": "b-ecs",
-  "module": "index.ts",
+  "version": "0.0.1",
+  "description": "small ecs lib",
+  "module": "src/index.ts",
   "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.9.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benevolarX/b-ecs.git"
+  },
+  "keywords": [
+    "ecs"
+  ],
+  "author": "benevolarX",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/benevolarX/b-ecs/issues"
+  },
+  "homepage": "https://github.com/benevolarX/b-ecs#readme"
 }
