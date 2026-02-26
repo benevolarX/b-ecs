@@ -10,5 +10,7 @@ export const defineComponents = (params: defineComponentsParams) => {
     // components.push(component)
   }
 }
-
+// 1 component = 1 symbol_id
+// 1 symbol_id + scene = 1 bitmask
+// 
 // world.registerComponents(components[])

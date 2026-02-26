@@ -1,19 +1,5 @@
 # b-ecs
 
-To install dependencies:
-
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.3.7. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
-
 ```ts
 import { ecs } from "b-css";
 
@@ -70,4 +56,48 @@ world.switchScene("main_menu")
 // 5) define current scene
 // 6) run world
 
+// 1) components = name + typed props
+const components = defineComponents({
+  position: { 
+    x: Types.number.default(0), 
+    y: Types.number.default(0) 
+  },
+  direction: { 
+    x: Types.number.default(1), 
+    y: Types.number.default(0) 
+  },
+  speed: { 
+    v: Types.number.default(0) 
+  }
+})
+// 2) create world 
+const world = new World()
+// 3) add component 
+world.addComponents(components)
+// 4) create scene
+class InGame extends world.createScene() {
+  // ... 
+}
+// 5) create systems
+const Position: symbol = world.components.position // 
+const Direction: symbol = world.components.direction
+const Speed : symbol = world.components.speed
+class MoveSystem extends defineQueries({ movable: { with: [Position, Direction, Speed] } }) {
+  update(scene, time, ...params: any[]) {
+    const components = scene.components
+    for (const entity of this.queries.movable) {
+      const direction = components.get(Direction, entity)
+      const speed = components.get(Speed, entity)
+      components.set(Position, entity, (old) => {
+        const dt = time * speed;
+        return {
+          x: old.x + direction.x * dt,
+          y: old.y + direction.y * dt
+        }
+      })
+    }
+  }
+}
+// 6) query => symbol + scene = bitmask
+// 7) 
 ```
