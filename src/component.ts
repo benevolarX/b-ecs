@@ -7,7 +7,7 @@ export function createECS() {
   const symbolToSchema = new Map<symbol, Record<string, IType<any>>>();
 
   function defineComponents<R extends Record<string, Record<string, IType<any>>>>(registry: R): ToTokenRegistry<R> {
-    const result = {} as ToTokenRegistry<R>;
+    const result = Object.create(null) as ToTokenRegistry<R>;
     for (const key in registry) {
       const sym = Symbol(key);
       nameToSymbol.set(key, sym);

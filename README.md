@@ -157,5 +157,15 @@ function buildWorld<const T extends Record<string, symbol>>(components: T) {
     }
   };
 }
+
 // 
+for (let i = 0; i < distinctTokens.length; i++) {
+
+  const r = i & 31            // plus rapide que %
+  const index = i >> 5        // division par 32
+  const bit = 1 << r
+
+  this.tokenToMask.set(token, { index, bit })
+}
+
 ```
