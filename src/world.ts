@@ -1,17 +1,18 @@
-import type { ComponentDef } from "./component";
+//import type { ComponentDef } from "./component";
 import { EntityManager, type EntityID } from "./entity";
 import type { Scene } from "./scene";
+import type { Token } from "./utils";
 
 export class World {
 
-  #components: Set<any>;
   #entities = new Set<EntityID>();
   #scenes: Scene[] = [];
   #currentSceneId: number|null = null;
   #entityManager: EntityManager;
+  components: Record<string, Token<any>>;
 
-  constructor() {
-    this.#components = new Set()
+  constructor(components: any) {
+    this.components = components
     this.#entityManager = new EntityManager()
   }
 
@@ -25,10 +26,6 @@ export class World {
     }
   }
 
-  registerComponent(component: any) {
-    this.#components.add(component)
-  }
-
   createEntity(): EntityID {
     const id: EntityID = this.#entityManager.create()
     this.#entities.add(id);
@@ -40,7 +37,7 @@ export class World {
     this.#entityManager.destroy(entity);
   }
 
-  setComponent(entity: EntityID, component: ComponentDef, value: any) {
+  setComponent(entity: EntityID, component: any, value: any) {
 
   }
 

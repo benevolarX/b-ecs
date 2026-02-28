@@ -101,3 +101,61 @@ class MoveSystem extends defineQueries({ movable: { with: [Position, Direction, 
 // 6) query => symbol + scene = bitmask
 // 7) 
 ```
+
+/!\ la scène détecte le nombre de composant par système et choisi
+d'instancier un manager de bitmask adapté 
+1-32 composants : number classique
+32-64 composants : number low et number hight
+65+ : uint32array 
+
+```ts
+type ComponentDefinitions = Record<string, any>;
+
+type ComponentSymbols<T extends ComponentDefinitions> = {
+  [K in keyof T]: symbol & { __type?: T[K] };
+};
+
+function defineComponents<const T extends ComponentDefinitions>(
+  defs: T
+): ComponentSymbols<T> {
+  const result = {} as ComponentSymbols<T>;
+
+  for (const key in defs) {
+    result[key] = Symbol(key) as ComponentSymbols<T>[typeof key];
+  }
+
+  return result;
+}
+
+
+// builder 
+
+function defineComponents<const T extends ComponentDefs>(
+  defs: T
+): ComponentSymbols<T> {
+  const result = {} as ComponentSymbols<T>;
+
+  for (const key in defs) {
+    result[key] = Symbol(key) as ComponentSymbols<T>[typeof key];
+  }
+
+  return result;
+}
+//
+class World<T extends Record<string, symbol>> {
+  public readonly components: T;
+
+  constructor(components: T) {
+    this.components = components;
+  }
+}
+//
+function buildWorld<const T extends Record<string, symbol>>(components: T) {
+  return {
+    build() {
+      return new World<T>(components);
+    }
+  };
+}
+// 
+```
