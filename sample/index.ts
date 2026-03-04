@@ -6,25 +6,21 @@ import { Types } from "../src/types"
 const { defineComponents, addComponent} = createECS()
 
 const components = defineComponents({
-  position: {
+  position: Types.object({
     x: Types.number.default(0),
     y: Types.number.default(0)
-  },
-  speed: {
-    val: Types.number.default(0).min(0)
-  },
-  direction: {
+  }),
+  speed: Types.number.default(0).min(0),
+  direction: Types.object({
     x: Types.number.default(0),
-    y: Types.number.default(0)
-  }
-} as const)
-
-addComponent(3, components.position, { x: 3, y: 8 })
-addComponent(8, components.speed, {
-  val: 0
+    y: Types.number.default(0),
+  }),
 })
+
+addComponent(3, components.position, { x: 10, y: 10 })
+addComponent(8, components.speed, 1)
+
+// class MoveSystem extends defineQueries({ movable: [components.position, components.speed] })
 
 //world.setComponent(player, new Symbol("position"), { x: 0, y: 0})
 // world.components. 
-
-// Record<N extends string, symbol & { readonly __type?: Record<T extends string, U extends IType<any>> } >

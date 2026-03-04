@@ -1,17 +1,17 @@
 import type { EntityID } from "./entity";
-import { type ToTokenRegistry, type IType, type Token, type Val, type Result, ok, err } from "./utils"
+import { type ToTokenRegistry, type IType, type Token, type Val, type Result, ok, err, type ComponentSchema, isIType } from "./utils"
 
 export function createECS() {
 
   const nameToSymbol = new Map<string, symbol>();
-  const symbolToSchema = new Map<symbol, Record<string, IType<any>>>();
+  const symbolToSchema = new Map<symbol, ComponentSchema>();
 
-  function defineComponents<R extends Record<string, Record<string, IType<any>>>>(registry: R): ToTokenRegistry<R> {
+  function defineComponents<R extends Record<string, ComponentSchema>>(registry: R): ToTokenRegistry<R> {
     const result = Object.create(null) as ToTokenRegistry<R>;
     for (const key in registry) {
       const sym = Symbol(key);
       nameToSymbol.set(key, sym);
-      symbolToSchema.set(sym, registry[key] as Record<string, IType<any>>);
+      symbolToSchema.set(sym, registry[key] as ComponentSchema);
       result[key] = sym as Token<R[typeof key]>;
     }
     return result;
@@ -26,11 +26,17 @@ export function createECS() {
     if (!schema) {
       return err("Unknown componentToken")
     }
+
+    if (isIType(schema)) {
+      if (!(schema as IType<any>).isValid(val)) return err("Invalid value");
+      return ok(val);
+    }
+
     for (const key in schema) {
       const type: IType<any> = schema[key] as IType<any>;
       const value = (val as any)[key];
       if (!type.isValid(value)) {
-        return err(`Invalid value for ${key}`)
+        return err(`Invalid value for ${key}`);
       }
     }
 
@@ -38,6 +44,7 @@ export function createECS() {
     // entityComponents.get(entity).set(componentType, val)
     // entityComponents.get(componentType).set(entity, val)
 
+    // pour le moment on ne fait que valider le paramètre
     return ok(val);
   }
 

@@ -1,4 +1,4 @@
-import type { IType } from "./utils";
+import type { InferType, IType } from "./utils";
 
 // export type Bitmask = bigint;
 
@@ -86,11 +86,31 @@ class StringType implements IType<string> {
   }
   
 }
+// todo repare cette merde 
 
-//type TypesList = { [key: string]: IType<any> }
+class ObjectType<T extends Record<string, IType<any>>> implements IType<T> {
+
+  #default_val: null|T = null
+  #val: T
+
+  constructor(val: T) {
+    this.#val = val
+  }
+
+  default(val: { [K in keyof T]: InferType<T[K]> }): this {
+    this.#default_val = val
+    return this
+  }
+
+  isValid(val: unknown): val is T {
+    // for each this.#val => [k, v] => v.isValid(val[k])
+    return true
+  }
+}
 
 export const Types = {
   number: new NumberType(),
   boolean: new BooleanType(),
-  string: new StringType()
+  string: new StringType(),
+  object: <T extends Record<string, IType<any>>>(v: T) => new ObjectType<T>(v)
 } as const;

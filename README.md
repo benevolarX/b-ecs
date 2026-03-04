@@ -169,3 +169,22 @@ for (let i = 0; i < distinctTokens.length; i++) {
 }
 
 ```
+
+todo : mettre types.object<IType>
+
+refactor ecs for dummies : 
+ecsbuilder()
+//.getComponentManager()
+.defineComponents()
+.nextStep()
+
+.getSystemBuilder()
+.registerSystem()
+.nextStep()
+
+.getSceneManager()
+.registerScene()
+.defineMainScene()
+.nextStep()
+
+.run()
