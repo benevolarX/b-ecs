@@ -88,7 +88,12 @@ class StringType implements IType<string> {
 }
 // todo repare cette merde 
 
-class ObjectType<T extends Record<string, IType<any>>> implements IType<T> {
+type InferSchema<T extends Record<string, IType<any>>> = {
+  [K in keyof T]: InferType<T[K]>
+}
+
+//class ObjectType<T extends Record<string, IType<any>>> implements IType<T> {
+class ObjectType<T extends Record<string, IType<any>>> implements IType<InferSchema<T>> {
 
   #default_val: null|T = null
   #val: T
@@ -102,7 +107,7 @@ class ObjectType<T extends Record<string, IType<any>>> implements IType<T> {
     return this
   }
 
-  isValid(val: unknown): val is T {
+  isValid(val: unknown): val is InferSchema<T> {
     // for each this.#val => [k, v] => v.isValid(val[k])
     return true
   }
