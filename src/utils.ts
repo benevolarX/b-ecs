@@ -31,23 +31,33 @@ export type Val<S> = ExtractSchema<S> extends IType<any>
   ? InferType<ExtractSchema<S>>                                    // forme scalaire → valeur directe
   : { [K in keyof ExtractSchema<S>]: InferType<ExtractSchema<S>[K] extends IType<any> ? ExtractSchema<S>[K] : never> } 
 */
+// pour Val et QueryResult — résout le type final
+export type ResolveToken<T extends Token<any, any>> = 
+  T extends Token<infer Schema, any>
+    ? Schema extends IType<infer V> ? V
+    : { [K in keyof Schema]: Schema[K] extends IType<infer V> ? V : never }
+  : never
+/*
 export type Val<S> = ExtractSchema<S> extends infer Schema
   ? Schema extends IType<any>
     ? InferType<Schema>
     : { [K in keyof Schema]: Schema[K] extends IType<any> ? InferType<Schema[K]> : never }
   : never;
+*/
+export type Val<S extends Token<any, any>> = ResolveToken<S>
 
 export type Strict<T> = T & {
   [K in Exclude<string, keyof T>]?: never;
 };
+
 /*
 export type ToTokenRegistry<R extends Record<string, ComponentSchema>> = {
-  [N in keyof R]: Token<R[N]>;
-};
-
-*/
+  [N in keyof R & string]: R[N] extends IType<infer T> 
+    ? Token<IType<T>, N>           // forme scalaire → Token<IType<number>, "speed">
+    : Token<R[N], N>               // forme objet → Token<Record<...>, "speed">
+}*/
 export type ToTokenRegistry<R extends Record<string, ComponentSchema>> = {
-  [N in keyof R]: Token<R[N], N & string>
+  [N in keyof R & string]: Token<R[N], N & string>
 }
 //
 

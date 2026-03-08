@@ -1,18 +1,6 @@
 import type { EntityID } from "./entity";
-import { type ToTokenRegistry, type IType, type Token, type Val, type Result, ok, err, type ComponentSchema, isIType } from "./utils"
-
-/*
-function defineQueries<Q extends Record<string, Token<any>[]>>(queries: Q) {
-  return class {
-    protected queries!: {
-      [K in keyof Q]: {
-        each(cb: (components: QueryResult<Q[K]>) => void): void
-      }
-    }
-    abstract update(command: Command, time: number): void
-  }
-}
-*/
+import type { ISystem, SystemConstructor } from "./system";
+import { type ToTokenRegistry, type IType, type Token, type Result, ok, err, type ComponentSchema, isIType, type QueryResult, type NoEmptyArray, type NonEmptyTokenArray, type Val } from "./utils"
 
 export function createECS() {
 
@@ -29,18 +17,25 @@ export function createECS() {
   function buildWorld<R extends Record<string, ComponentSchema>>(components: ToTokenRegistry<R>) {
 
     function getDefineQueries() {
-      function defineQueries() {
+      return function defineQueries<Q extends Record<string, NonEmptyTokenArray>>(queries: Q): SystemConstructor<Q> {
+        return class implements ISystem<Q> {
 
+          queries!: { [K in keyof Q]: { each(cb: (components: QueryResult<Q[K]>) => void): void } }
+          update(time: number): void {
+            
+          }
+        }
       }
-      return defineQueries 
     }
-    function registerSystem() {
-      return null
+    function registerSystems<S extends Record<string, SystemConstructor<any>>>(systemList: S) {
+      let systems = null
+      let sceneStep = null
+      return { systems, sceneStep }
     }
     function nextStepScenes() {
       return buildSceneStep()
     }
-    return { getDefineQueries, registerSystem, nextStepScenes }
+    return { getDefineQueries, registerSystems, nextStepScenes }
   }
 
   function defineComponents<R extends Record<string, ComponentSchema>>(registry: R)
