@@ -1,6 +1,8 @@
 import { createECS } from "../src/ecs"
 import { Types } from "../src/types"
-import type { QueryResult, Val } from "../src/utils"
+//import type { QueryResult, Val } from "../src/utils"
+//type Test = QueryResult<[typeof components.position, typeof components.speed]>
+//type Test2 = Val<typeof components.position>
 
 // 1) components
 
@@ -17,9 +19,6 @@ const { components, world } = defineComponents({
     y: Types.number.default(0),
   }),
 })
-
-type Test = QueryResult<[typeof components.position, typeof components.speed]>
-type Test2 = Val<typeof components.position>
 
 const defineQueries = world.getDefineQueries()
 
@@ -38,24 +37,11 @@ class PlayerSystem extends defineQueries({
 }) {
   override update(time: number) {
     this.queries.movable.each((c) => {
-
     })
   }
 }
 
-const { systems, sceneStep} = world.registerSystems({
+const { systems, sceneStep } = world.registerSystems({
   move: MoveSystem,
   player: PlayerSystem
 })
-/*
-class MoveSystem extends defineQueries() {
-
-}*/
-
-//addComponent(3, components.position, { x: 10, y: 10 })
-//addComponent(8, components.speed, 1)
-
-// class MoveSystem extends defineQueries({ movable: [components.position, components.speed] })
-
-//world.setComponent(player, new Symbol("position"), { x: 0, y: 0})
-// world.components. 

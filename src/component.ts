@@ -12,7 +12,7 @@ export function createECS() {
       const sym = Symbol(key);
       nameToSymbol.set(key, sym);
       symbolToSchema.set(sym, registry[key] as ComponentSchema);
-      result[key] = sym as Token<R[typeof key]>;
+      result[key] = sym as Token<R[typeof key], typeof key>;
     }
     return result;
   }
