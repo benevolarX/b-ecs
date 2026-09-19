@@ -1,12 +1,23 @@
 import type { EntityID } from "./entity";
-import { type ToTokenRegistry, type IType, type Token, type Val, type Result, ok, err, type ComponentSchema, isIType } from "./utils"
+import {
+  type ToTokenRegistry,
+  type IType,
+  type Token,
+  type Val,
+  type Result,
+  ok,
+  err,
+  type ComponentSchema,
+  isIType,
+} from "./utils";
 
 export function createECS() {
-
   const nameToSymbol = new Map<string, symbol>();
   const symbolToSchema = new Map<symbol, ComponentSchema>();
 
-  function defineComponents<R extends Record<string, ComponentSchema>>(registry: R): ToTokenRegistry<R> {
+  function defineComponents<R extends Record<string, ComponentSchema>>(
+    registry: R,
+  ): ToTokenRegistry<R> {
     const result = Object.create(null) as ToTokenRegistry<R>;
     for (const key in registry) {
       const sym = Symbol(key);
@@ -20,11 +31,11 @@ export function createECS() {
   function addComponent<S extends Token<any>>(
     entity: EntityID,
     componentToken: S,
-    val: Val<S> // val: Strict<Val<S>>
+    val: Val<S>, // val: Strict<Val<S>>
   ): Result<Val<S>, string> {
     const schema = symbolToSchema.get(componentToken);
     if (!schema) {
-      return err("Unknown componentToken")
+      return err("Unknown componentToken");
     }
 
     if (isIType(schema)) {
@@ -48,5 +59,5 @@ export function createECS() {
     return ok(val);
   }
 
-  return { defineComponents, addComponent }
+  return { defineComponents, addComponent };
 }

@@ -5,7 +5,7 @@ export class EntityManager {
   private free: EntityID[] = [];
 
   create(): EntityID {
-    return (this.free.length > 0 ? this.free.pop()! : this.next++) ;
+    return this.free.length > 0 ? this.free.pop()! : this.next++;
   }
 
   destroy(entity: EntityID): void {

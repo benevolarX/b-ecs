@@ -1,11 +1,12 @@
-export interface IQuery<T extends number> { // number = bitmask of component
-  with: Set<T>,
-  without?: Set<T>
+export interface IQuery<T extends number> {
+  // number = bitmask of component
+  with: Set<T>;
+  without?: Set<T>;
 }
 
-type Queries<T extends number> = { [key in string]: IQuery<T> }
+type Queries<T extends number> = { [key in string]: IQuery<T> };
 
-type Archetypes = { [key in string]: { with: number, without?: number } }
+type Archetypes = { [key in string]: { with: number; without?: number } };
 
 export function defineQueries<T extends number>(queries: Queries<T>): Archetypes {
   let archetypes: Archetypes = {};
@@ -13,9 +14,9 @@ export function defineQueries<T extends number>(queries: Queries<T>): Archetypes
     let archetypeWith = query.with.values().reduce((a, b) => a + b, 0);
     if (query.without) {
       let archetypeWithout = query.without.values().reduce((a, b) => a + b, 0);
-      archetypes[queryName] = { 
+      archetypes[queryName] = {
         with: archetypeWith,
-        without: archetypeWithout
+        without: archetypeWithout,
       };
     } else {
       archetypes[queryName] = { with: archetypeWith };

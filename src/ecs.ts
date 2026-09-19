@@ -1,15 +1,27 @@
 //import type { EntityID } from "./entity";
 import type { ISystem, SystemConstructor } from "./system";
-import { type ToTokenRegistry, type IType, type Token, type Result, ok, err, type ComponentSchema, isIType, type QueryResult, type NoEmptyArray, type NonEmptyTokenArray, type Val } from "./utils"
+import {
+  type ToTokenRegistry,
+  type IType,
+  type Token,
+  type Result,
+  ok,
+  err,
+  type ComponentSchema,
+  isIType,
+  type QueryResult,
+  type NoEmptyArray,
+  type NonEmptyTokenArray,
+  type Val,
+} from "./utils";
 enum ECSStep {
   COMPONENTS,
   SYSTEMS,
   SCENES,
-  RUN
+  RUN,
 }
 
 export function createECS() {
-
   let step: ECSStep = ECSStep.COMPONENTS;
   const componentNameToSymbol = new Map<string, symbol>();
   const symbolToComponent = new Map<symbol, ComponentSchema>();
@@ -22,46 +34,43 @@ export function createECS() {
       if (step != ECSStep.SCENES) { }
     */
     function addComponent() {
-      
       return null;
     }
-    return { addComponent }
+    return { addComponent };
   }
 
   function buildWorld<R extends Record<string, ComponentSchema>>(components: ToTokenRegistry<R>) {
-
     function getDefineQueries() {
-      return function defineQueries<Q extends Record<string, NonEmptyTokenArray>>(queries: Q): SystemConstructor<Q> {
+      return function defineQueries<Q extends Record<string, NonEmptyTokenArray>>(
+        queries: Q,
+      ): SystemConstructor<Q> {
         return class implements ISystem<Q> {
-
-          queries!: { [K in keyof Q]: { each(cb: (components: QueryResult<Q[K]>) => void): void } }
-          update(time: number): void {
-            
-          }
-        }
-      }
+          queries!: { [K in keyof Q]: { each(cb: (components: QueryResult<Q[K]>) => void): void } };
+          update(time: number): void {}
+        };
+      };
     }
     function registerSystems<S extends Record<string, SystemConstructor<any>>>(systemList: S) {
       if (step != ECSStep.SYSTEMS) {
-        throw new Error("systems already defined")
+        throw new Error("systems already defined");
       }
       step = ECSStep.SCENES;
-      const result = Object.create(null)
+      const result = Object.create(null);
 
       for (const key in systemList) {
         const sym = Symbol(key);
         systemNameToSymbol.set(key, sym);
         symbolToSystem.set(sym, systemList[key] as SystemConstructor<any>);
-        result[key] = sym;// as Token<R[typeof key], typeof key>;
+        result[key] = sym; // as Token<R[typeof key], typeof key>;
       }
-      return { systems: result, sceneStep: buildSceneStep<S>(result) }
+      return { systems: result, sceneStep: buildSceneStep<S>(result) };
     }
-    return { getDefineQueries, registerSystems }
+    return { getDefineQueries, registerSystems };
   }
 
   function defineComponents<R extends Record<string, ComponentSchema>>(registry: R) {
     if (step != ECSStep.COMPONENTS) {
-      throw new Error("components already defined")
+      throw new Error("components already defined");
     }
     step = ECSStep.SYSTEMS;
     const result = Object.create(null) as ToTokenRegistry<R>;
@@ -71,7 +80,7 @@ export function createECS() {
       symbolToComponent.set(sym, registry[key] as ComponentSchema);
       result[key] = sym as Token<R[typeof key], typeof key>;
     }
-    return { components: result, world: buildWorld<R>(result) }
+    return { components: result, world: buildWorld<R>(result) };
   }
 
   /*
@@ -106,5 +115,5 @@ export function createECS() {
     return ok(val);
   }*/
 
-  return { defineComponents }
+  return { defineComponents };
 }

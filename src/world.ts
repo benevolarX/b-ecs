@@ -4,16 +4,15 @@ import type { Scene } from "./scene";
 import type { Token } from "./utils";
 
 export class World {
-
   #entities = new Set<EntityID>();
   #scenes: Scene[] = [];
-  #currentSceneId: number|null = null;
+  #currentSceneId: number | null = null;
   #entityManager: EntityManager;
   components: Record<string, Token<any>>;
 
   constructor(components: any) {
-    this.components = components
-    this.#entityManager = new EntityManager()
+    this.components = components;
+    this.#entityManager = new EntityManager();
   }
 
   start() {
@@ -27,7 +26,7 @@ export class World {
   }
 
   createEntity(): EntityID {
-    const id: EntityID = this.#entityManager.create()
+    const id: EntityID = this.#entityManager.create();
     this.#entities.add(id);
     return id;
   }
@@ -37,8 +36,5 @@ export class World {
     this.#entityManager.destroy(entity);
   }
 
-  setComponent(entity: EntityID, component: any, value: any) {
-
-  }
-
+  setComponent(entity: EntityID, component: any, value: any) {}
 }

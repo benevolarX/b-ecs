@@ -3,10 +3,9 @@ import type { InferType, IType } from "./utils";
 // export type Bitmask = bigint;
 
 class NumberType implements IType<number> {
-    
   #default_val: number = 0;
-  #min_val: number|null = null;
-  #max_val: number|null = null;
+  #min_val: number | null = null;
+  #max_val: number | null = null;
 
   default(val: number): this {
     this.#default_val = val;
@@ -15,7 +14,7 @@ class NumberType implements IType<number> {
 
   isValid(val: unknown): val is number {
     if (typeof val != "number") {
-      return false
+      return false;
     }
     if (this.#min_val != null && this.#min_val > val) {
       return false;
@@ -35,7 +34,6 @@ class NumberType implements IType<number> {
     this.#max_val = val;
     return this;
   }
-
 }
 
 class BooleanType implements IType<boolean> {
@@ -49,13 +47,12 @@ class BooleanType implements IType<boolean> {
   isValid(val: unknown): val is boolean {
     return true;
   }
-
 }
 
 class StringType implements IType<string> {
   #default_val: string = "";
-  #min_len: number|null = null;
-  #max_len: number|null = null;
+  #min_len: number | null = null;
+  #max_len: number | null = null;
 
   default(val: string): this {
     this.#default_val = val;
@@ -84,32 +81,30 @@ class StringType implements IType<string> {
     this.#max_len = val;
     return this;
   }
-  
 }
-// todo repare cette merde 
+// todo repare cette merde
 
 type InferSchema<T extends Record<string, IType<any>>> = {
-  [K in keyof T]: InferType<T[K]>
-}
+  [K in keyof T]: InferType<T[K]>;
+};
 
 //class ObjectType<T extends Record<string, IType<any>>> implements IType<T> {
 class ObjectType<T extends Record<string, IType<any>>> implements IType<InferSchema<T>> {
-
-  #default_val: null|T = null
-  #val: T
+  #default_val: null | T = null;
+  #val: T;
 
   constructor(val: T) {
-    this.#val = val
+    this.#val = val;
   }
 
   default(val: { [K in keyof T]: InferType<T[K]> }): this {
-    this.#default_val = val
-    return this
+    this.#default_val = val;
+    return this;
   }
 
   isValid(val: unknown): val is InferSchema<T> {
     // for each this.#val => [k, v] => v.isValid(val[k])
-    return true
+    return true;
   }
 }
 
@@ -117,5 +112,5 @@ export const Types = {
   number: new NumberType(),
   boolean: new BooleanType(),
   string: new StringType(),
-  object: <T extends Record<string, IType<any>>>(v: T) => new ObjectType<T>(v)
+  object: <T extends Record<string, IType<any>>>(v: T) => new ObjectType<T>(v),
 } as const;
